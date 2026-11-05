@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Tests du metier, du stockage et des ViewModels : net8.0, donc executables hors Windows. -->
+  <!-- Tests du metier, du stockage et des ViewModels : net10.0, donc executables hors Windows. -->
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Factures.Tests</RootNamespace>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>

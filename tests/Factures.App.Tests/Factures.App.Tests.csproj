@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Tests de la couche WPF : chargement reel du XAML et controle des liaisons. Windows uniquement. -->
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <RootNamespace>Factures.App.Tests</RootNamespace>
     <IsTestProject>true</IsTestProject>

@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/KorayAkyk/factures-wpf/actions/workflows/ci.yml/badge.svg)](https://github.com/KorayAkyk/factures-wpf/actions/workflows/ci.yml)
 
-Logiciel de bureau Windows de suivi de factures pour un travailleur indépendant, écrit en C# / .NET 8 / WPF.
+Logiciel de bureau Windows de suivi de factures pour un travailleur indépendant, écrit en C# / .NET 10 / WPF.
 Projet de démonstration : toutes les données sont inventées.
 
 *English summary at the end of this page.*
@@ -35,28 +35,28 @@ Captures réelles de l'application publiée, prises par la CI sur `windows-lates
 
 ```text
               +---------------------------------------------+
-              | Factures.App (net8.0-windows)               |
+              | Factures.App (net10.0-windows)              |
               | Vues XAML, styles, injection de dependances |
               +----------+-----------------------+----------+
                          |                       |
                          v                       v
    +-------------------------------+   +-------------------------------+
-   | Factures.Presentation (net8.0)|   | Factures.Data (net8.0)        |
+   | Factures.Presentation net10.0 |   | Factures.Data net10.0         |
    | ViewModels, navigation,       |   | SQLite : migrations et depots |
    | interfaces de dialogue        |   | (Microsoft.Data.Sqlite)       |
    +---------------+---------------+   +---------------+---------------+
                    |                                   |
                    v                                   v
               +---------------------------------------------+
-              | Factures.Core (net8.0), sans dependance     |
+              | Factures.Core (net10.0), sans dependance    |
               | Domaine, cas d'usage, LINQ, tableau de bord,|
               | export CSV, interfaces de stockage          |
               +---------------------------------------------+
 
-   tests/Factures.Tests (net8.0)            metier, SQLite, ViewModels
-   tests/Factures.App.Tests (net8.0-windows) vues XAML chargees et rendues
-   installer/Factures.Installer (WiX 5)     MSI x64 du dossier publie
-   build/Package.proj (MSBuild)             publication, MSI, paquet NuGet
+   tests/Factures.Tests (net10.0)             metier, SQLite, ViewModels
+   tests/Factures.App.Tests (net10.0-windows) vues XAML chargees et rendues
+   installer/Factures.Installer (WiX 5)       MSI x64 du dossier publie
+   build/Package.proj (MSBuild)               publication, MSI, paquet NuGet
 ```
 
 Les dépendances vont toujours vers `Factures.Core`. `Factures.App` est le seul projet qui connaît à la fois les
@@ -66,8 +66,8 @@ interfaces et leurs implémentations (`Bootstrapper.cs`).
 
 | Compétence | Où la voir |
 |---|---|
-| C# | C# 12 avec références nullables activées et avertissements traités comme erreurs |
-| .NET | .NET 8, solution en couches, `net8.0` et `net8.0-windows` |
+| C# | C# 14 avec références nullables activées et avertissements traités comme erreurs |
+| .NET | .NET 10 (LTS), solution en couches, `net10.0` et `net10.0-windows` |
 | WPF | `src/Factures.App` : fenêtre, `DataGrid`, gabarits, déclencheurs de style |
 | MVVM | `src/Factures.Presentation` : CommunityToolkit.Mvvm ; les code-behind des vues se limitent à `InitializeComponent` |
 | XAML | `src/Factures.App/Themes` : couleurs, boutons, grilles et badges en ressources communes |
@@ -78,7 +78,7 @@ interfaces et leurs implémentations (`Bootstrapper.cs`).
 
 ## Choix techniques et pourquoi
 
-- **ViewModels dans une bibliothèque `net8.0`.** Elle ne peut pas référencer WPF : c'est le compilateur qui garantit la
+- **ViewModels dans une bibliothèque `net10.0`.** Elle ne peut pas référencer WPF : c'est le compilateur qui garantit la
   séparation, et les tests des ViewModels n'ont pas besoin de Windows.
 - **Retard calculé, jamais stocké.** Une facture ne peut pas rester « envoyée » à tort : le statut dépend de la date
   fournie par `IClock`, que les tests fixent.
@@ -93,7 +93,7 @@ interfaces et leurs implémentations (`Bootstrapper.cs`).
 
 ## Compiler, tester, installer
 
-Il faut Windows et le SDK .NET 8 indiqué dans `global.json`.
+Il faut Windows et le SDK .NET 10 indiqué dans `global.json`.
 
 ```powershell
 dotnet restore FacturesWpf.sln
@@ -106,8 +106,7 @@ dotnet test tests/Factures.App.Tests -c Release   # vues WPF
 dotnet msbuild build/Package.proj                 # artifacts/publish, artifacts/msi, artifacts/nuget
 ```
 
-La CI exécute la restauration, la compilation, les tests et les étapes `-t:Publish`, `-t:Msi` et `-t:Pack`.
-`dotnet run` et l'enchaînement par défaut de `Package.proj` ne sont pas exécutés par la CI.
+La CI exécute ces mêmes commandes.
 
 Pour installer sans compiler : ouvrir une
 [exécution de la CI](https://github.com/KorayAkyk/factures-wpf/actions/workflows/ci.yml), télécharger l'artefact
@@ -119,13 +118,15 @@ Le fichier fait environ 57 Mo. La désinstallation laisse la base de données en
 
 Chaque exécution de la [CI](.github/workflows/ci.yml), sur `windows-latest` :
 
-1. restaure, compile, puis lance les tests (170 au total : 155 en `net8.0`, 15 sur les vues WPF) ;
-2. publie l'application ;
-3. lance l'exécutable publié et le pilote par UI Automation (`build/ui-smoke.ps1`) : pages, recherche, filtres, message
+1. restaure, compile, puis lance les tests (170 au total : 155 en `net10.0`, 15 sur les vues WPF) ;
+2. lance le logiciel avec `dotnet run`, vérifie que sa fenêtre s'ouvre et qu'il se ferme proprement
+   (`build/run-check.ps1`) ;
+3. enchaîne publication, MSI et paquet NuGet avec `build/Package.proj` ;
+4. lance l'exécutable publié et le pilote par UI Automation (`build/ui-smoke.ps1`) : pages, recherche, filtres, message
    d'erreur à l'écran, fermeture propre, avec une capture de chaque page ;
-4. construit le MSI, l'installe en mode silencieux, vérifie les fichiers et le raccourci, lance le logiciel installé,
+5. installe le MSI en mode silencieux, vérifie les fichiers et le raccourci, lance le logiciel installé,
    puis le désinstalle (`build/msi-check.ps1`) ;
-5. joint le MSI, le paquet NuGet, les captures et les résultats de tests à l'exécution.
+6. joint le MSI, le paquet NuGet, les captures et les résultats de tests à l'exécution.
 
 Les tests de `Factures.App.Tests` chargent chaque vue et échouent à la moindre erreur de liaison XAML.
 
@@ -138,8 +139,7 @@ Limites connues :
 - le MSI est testé en mode silencieux : ses écrans d'installation et la mise à niveau d'une version à l'autre ne sont
   pas vérifiés ;
 - le MSI n'est pas signé ;
-- l'envoi d'une facture ne fait que changer son statut : aucun e-mail ni PDF n'est produit ;
-- .NET 8 arrive en fin de support le 10 novembre 2026. La cible est conservée à .NET 8.
+- l'envoi d'une facture ne fait que changer son statut : aucun e-mail ni PDF n'est produit.
 
 ## Licence
 
@@ -147,12 +147,12 @@ Limites connues :
 
 ## English summary
 
-`factures-wpf` is a Windows desktop invoice tracker for freelancers, built with C#, .NET 8 and WPF using MVVM. It covers
+`factures-wpf` is a Windows desktop invoice tracker for freelancers, built with C#, .NET 10 and WPF using MVVM. It covers
 clients, invoices and lines, statuses (draft, sent, paid, overdue), a dashboard, LINQ search and filters, CSV export, and
 a local SQLite database. All data is made up.
 
-The solution is layered: a dependency-free `net8.0` core, a SQLite data layer, `net8.0` view models with no WPF
-reference, and a `net8.0-windows` WPF application. A WiX 5 project produces an MSI, and `build/Package.proj` drives
+The solution is layered: a dependency-free `net10.0` core, a SQLite data layer, `net10.0` view models with no WPF
+reference, and a `net10.0-windows` WPF application. A WiX 5 project produces an MSI, and `build/Package.proj` drives
 publishing and packaging with MSBuild. On `windows-latest`, GitHub Actions restores, builds, runs the xUnit tests, drives
 the published application through UI Automation, then installs, launches and uninstalls the MSI, which is attached to
 the run as an artifact. Released under the MIT license.
