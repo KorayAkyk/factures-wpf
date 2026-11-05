@@ -43,22 +43,20 @@ jobs:
       - name: Tests des vues WPF
         run: dotnet test tests/Factures.App.Tests --no-build -c ${{ env.CONFIGURATION }} --logger "trx;LogFileName=vues.trx" --logger "console;verbosity=normal" --results-directory artifacts/tests
 
-      - name: Publier l'application
-        run: dotnet msbuild build/Package.proj -t:Publish -p:Version=${{ env.APP_VERSION }}
+      - name: Verifier dotnet run
+        shell: powershell
+        run: ./build/run-check.ps1
+
+      - name: Publier, construire le MSI et le paquet NuGet
+        run: dotnet msbuild build/Package.proj -p:Version=${{ env.APP_VERSION }}
 
       - name: Parcours de fumee de l'application publiee
         shell: powershell
         run: ./build/ui-smoke.ps1 -ExePath artifacts/publish/FacturesWpf.exe -CaptureDir artifacts/captures
 
-      - name: Construire le MSI
-        run: dotnet msbuild build/Package.proj -t:Msi -p:Version=${{ env.APP_VERSION }}
-
       - name: Installer, lancer et desinstaller le MSI
         shell: powershell
         run: ./build/msi-check.ps1 -MsiPath "artifacts/msi/FacturesWpf-${{ env.APP_VERSION }}-x64.msi" -LogDir artifacts/msi-logs
-
-      - name: Construire le paquet NuGet du metier
-        run: dotnet msbuild build/Package.proj -t:Pack -p:Version=${{ env.APP_VERSION }}
 
       - name: Joindre le MSI
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
