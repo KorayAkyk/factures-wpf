@@ -23,10 +23,12 @@ public sealed partial class DashboardViewModel(
     private static readonly CultureInfo French = CultureInfo.GetCultureInfo("fr-FR");
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasOverdue))]
+    [NotifyPropertyChangedFor(nameof(HasOverdue), nameof(HasNoOverdue))]
     private DashboardSummary? _summary;
 
     public bool HasOverdue => Summary is { OverdueCount: > 0 };
+
+    public bool HasNoOverdue => Summary is { OverdueCount: 0 };
 
     public ObservableCollection<MonthBar> Months { get; } = [];
 

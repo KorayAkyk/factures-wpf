@@ -1,0 +1,119 @@
+<UserControl x:Class="Factures.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.AutomationId="dashboard-page">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <StackPanel>
+      <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}"
+                 AutomationProperties.AutomationId="page-title" />
+
+      <UniformGrid Columns="4" Margin="0,0,-12,16">
+        <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+          <StackPanel>
+            <TextBlock Text="Encaissé cette année" Style="{StaticResource MutedText}" />
+            <TextBlock Text="{Binding Summary.PaidThisYear, StringFormat={}{0:C2}}" Style="{StaticResource KpiValue}"
+                       AutomationProperties.AutomationId="kpi-paid" />
+          </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+          <StackPanel>
+            <TextBlock Text="À encaisser, non échu" Style="{StaticResource MutedText}" />
+            <TextBlock Text="{Binding Summary.Outstanding, StringFormat={}{0:C2}}" Style="{StaticResource KpiValue}" />
+          </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+          <StackPanel>
+            <TextBlock Style="{StaticResource MutedText}">
+              <Run Text="En retard (" /><Run Text="{Binding Summary.OverdueCount, Mode=OneWay}" /><Run Text=")" />
+            </TextBlock>
+            <TextBlock Text="{Binding Summary.OverdueAmount, StringFormat={}{0:C2}}" Style="{StaticResource KpiValue}"
+                       Foreground="{StaticResource DangerBrush}" />
+          </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+          <StackPanel>
+            <TextBlock Style="{StaticResource MutedText}">
+              <Run Text="Brouillons (" /><Run Text="{Binding Summary.DraftCount, Mode=OneWay}" /><Run Text=")" />
+            </TextBlock>
+            <TextBlock Text="{Binding Summary.DraftAmount, StringFormat={}{0:C2}}" Style="{StaticResource KpiValue}" />
+          </StackPanel>
+        </Border>
+      </UniformGrid>
+
+      <Grid Margin="0,0,0,16">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="3*" />
+          <ColumnDefinition Width="12" />
+          <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Style="{StaticResource Card}">
+          <StackPanel>
+            <TextBlock Text="Encaissements des six derniers mois" Style="{StaticResource SectionTitle}" />
+            <ItemsControl ItemsSource="{Binding Months}" Focusable="False">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="90" />
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Label}" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
+                    <ProgressBar Grid.Column="1" Height="14" Maximum="100" Value="{Binding Percent, Mode=OneWay}"
+                                 Foreground="{StaticResource AccentBrush}"
+                                 Background="{StaticResource NeutralSoftBrush}" BorderThickness="0" />
+                    <TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat={}{0:C2}}"
+                               HorizontalAlignment="Right" VerticalAlignment="Center" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <Border Grid.Column="2" Style="{StaticResource Card}">
+          <StackPanel>
+            <TextBlock Text="Meilleurs clients (encaissé)" Style="{StaticResource SectionTitle}" />
+            <ItemsControl ItemsSource="{Binding Summary.TopClients}" Focusable="False">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <DockPanel Margin="0,0,0,8">
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding Amount, StringFormat={}{0:C2}}" Margin="8,0,0,0" />
+                    <TextBlock Text="{Binding ClientName}" TextTrimming="CharacterEllipsis" />
+                  </DockPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <DockPanel Margin="0,0,0,10">
+            <Button DockPanel.Dock="Right" Style="{StaticResource LinkButton}" Content="Voir dans la liste"
+                    Command="{Binding ShowOverdueCommand}" AutomationProperties.AutomationId="show-overdue" />
+            <TextBlock Text="Factures en retard" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+          </DockPanel>
+          <DataGrid Style="{StaticResource ReadOnlyGrid}" ItemsSource="{Binding Summary.OverdueInvoices}"
+                    AutomationProperties.AutomationId="overdue-grid" MaxHeight="220"
+                    Visibility="{Binding HasOverdue, Converter={StaticResource BoolToVisibility}}">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Numéro" Binding="{Binding DisplayNumber}" Width="130" />
+              <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="2*" />
+              <DataGridTextColumn Header="Objet" Binding="{Binding Subject}" Width="3*" />
+              <DataGridTextColumn Header="Échéance" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" Width="100" />
+              <DataGridTextColumn Header="Jours de retard" Binding="{Binding DaysOverdue}" Width="110" />
+              <DataGridTextColumn Header="Total TTC" Width="110"
+                                  Binding="{Binding TotalIncludingTax, StringFormat={}{0:C2}}"
+                                  ElementStyle="{StaticResource RightAlignedCellText}" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <TextBlock Text="Aucune facture en retard." Style="{StaticResource MutedText}"
+                     Visibility="{Binding HasNoOverdue, Converter={StaticResource BoolToVisibility}}" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,18 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:Factures.Presentation.ViewModels;assembly=Factures.Presentation"
+                    xmlns:views="clr-namespace:Factures.App.Views">
+  <!-- La page courante est un ViewModel : ces gabarits choisissent la vue correspondante. -->
+  <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+    <views:DashboardView />
+  </DataTemplate>
+  <DataTemplate DataType="{x:Type vm:InvoiceListViewModel}">
+    <views:InvoiceListView />
+  </DataTemplate>
+  <DataTemplate DataType="{x:Type vm:InvoiceEditorViewModel}">
+    <views:InvoiceEditorView />
+  </DataTemplate>
+  <DataTemplate DataType="{x:Type vm:ClientListViewModel}">
+    <views:ClientListView />
+  </DataTemplate>
+</ResourceDictionary>

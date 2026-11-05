@@ -1,0 +1,16 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:Factures.App.Converters">
+  <!-- Point d'entree unique des ressources partagees. -->
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="Colors.xaml" />
+    <ResourceDictionary Source="Typography.xaml" />
+    <ResourceDictionary Source="Buttons.xaml" />
+    <ResourceDictionary Source="Inputs.xaml" />
+    <ResourceDictionary Source="DataGrid.xaml" />
+    <ResourceDictionary Source="Badges.xaml" />
+    <ResourceDictionary Source="ViewTemplates.xaml" />
+  </ResourceDictionary.MergedDictionaries>
+  <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+  <converters:DateOnlyToDateTimeConverter x:Key="DateOnlyToDateTime" />
+</ResourceDictionary>

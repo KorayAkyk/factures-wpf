@@ -38,7 +38,11 @@ public sealed partial class ClientListViewModel(
     private bool CanDelete => SelectedClient is not null;
 
     [RelayCommand]
-    private void New() => SelectedClient = null;
+    private void New()
+    {
+        SelectedClient = null;
+        FillForm(null);
+    }
 
     [RelayCommand]
     private async Task SaveAsync()
@@ -68,7 +72,9 @@ public sealed partial class ClientListViewModel(
         });
     }
 
-    partial void OnSelectedClientChanged(Client? value)
+    partial void OnSelectedClientChanged(Client? value) => FillForm(value);
+
+    private void FillForm(Client? value)
     {
         _editingId = value?.Id ?? 0;
         Name = value?.Name ?? string.Empty;

@@ -17,17 +17,35 @@ public sealed partial class InvoiceFilterViewModel : ObservableObject
 {
     private static readonly ClientOption AllClients = new("Tous les clients", null);
 
+    private static readonly StatusOption[] AllStatuses =
+    [
+        new("Tous les statuts", null),
+        new(InvoiceStatus.Draft.ToFrench(), InvoiceStatus.Draft),
+        new(InvoiceStatus.Sent.ToFrench(), InvoiceStatus.Sent),
+        new(InvoiceStatus.Overdue.ToFrench(), InvoiceStatus.Overdue),
+        new(InvoiceStatus.Paid.ToFrench(), InvoiceStatus.Paid),
+    ];
+
+    private static readonly SortOption[] AllSorts =
+    [
+        new("Plus récentes d'abord", InvoiceSort.IssueDateDescending),
+        new("Échéance la plus proche", InvoiceSort.DueDateAscending),
+        new("Montant décroissant", InvoiceSort.AmountDescending),
+        new("Client (A à Z)", InvoiceSort.ClientAscending),
+    ];
+
     [ObservableProperty]
     private string _searchText = string.Empty;
 
+    // Selections nullables : une ComboBox WPF pousse null quand sa liste est videe.
     [ObservableProperty]
-    private StatusOption _selectedStatus;
+    private StatusOption? _selectedStatus = AllStatuses[0];
 
     [ObservableProperty]
-    private ClientOption _selectedClient = AllClients;
+    private ClientOption? _selectedClient = AllClients;
 
     [ObservableProperty]
-    private SortOption _selectedSort;
+    private SortOption? _selectedSort = AllSorts[0];
 
     [ObservableProperty]
     private DateOnly? _issuedFrom;
@@ -37,49 +55,34 @@ public sealed partial class InvoiceFilterViewModel : ObservableObject
 
     public InvoiceFilterViewModel()
     {
-        _selectedStatus = StatusOptions[0];
-        _selectedSort = SortOptions[0];
         ClientOptions.Add(AllClients);
     }
 
     public event EventHandler? Changed;
 
-    public IReadOnlyList<StatusOption> StatusOptions { get; } =
-    [
-        new("Tous les statuts", null),
-        new(InvoiceStatus.Draft.ToFrench(), InvoiceStatus.Draft),
-        new(InvoiceStatus.Sent.ToFrench(), InvoiceStatus.Sent),
-        new(InvoiceStatus.Overdue.ToFrench(), InvoiceStatus.Overdue),
-        new(InvoiceStatus.Paid.ToFrench(), InvoiceStatus.Paid),
-    ];
+    public IReadOnlyList<StatusOption> StatusOptions => AllStatuses;
 
-    public IReadOnlyList<SortOption> SortOptions { get; } =
-    [
-        new("Plus récentes d'abord", InvoiceSort.IssueDateDescending),
-        new("Échéance la plus proche", InvoiceSort.DueDateAscending),
-        new("Montant décroissant", InvoiceSort.AmountDescending),
-        new("Client (A à Z)", InvoiceSort.ClientAscending),
-    ];
+    public IReadOnlyList<SortOption> SortOptions => AllSorts;
 
     public ObservableCollection<ClientOption> ClientOptions { get; } = [];
 
     public InvoiceFilter ToFilter() => new()
     {
         SearchText = SearchText,
-        Status = SelectedStatus.Status,
-        ClientId = SelectedClient.ClientId,
+        Status = SelectedStatus?.Status,
+        ClientId = SelectedClient?.ClientId,
         IssuedFrom = IssuedFrom,
         IssuedTo = IssuedTo,
-        Sort = SelectedSort.Sort,
+        Sort = SelectedSort?.Sort ?? InvoiceSort.IssueDateDescending,
     };
 
     public void SelectStatus(InvoiceStatus? status) =>
-        SelectedStatus = StatusOptions.First(option => option.Status == status);
+        SelectedStatus = AllStatuses.First(option => option.Status == status);
 
     /// <summary>Recharge la liste des clients en conservant la selection si elle existe encore.</summary>
     public void SetClients(IEnumerable<Client> clients)
     {
-        var previous = SelectedClient.ClientId;
+        var previous = SelectedClient?.ClientId;
         ClientOptions.Clear();
         ClientOptions.Add(AllClients);
         foreach (var client in clients)
@@ -94,9 +97,9 @@ public sealed partial class InvoiceFilterViewModel : ObservableObject
     private void Reset()
     {
         SearchText = string.Empty;
-        SelectedStatus = StatusOptions[0];
+        SelectedStatus = AllStatuses[0];
         SelectedClient = AllClients;
-        SelectedSort = SortOptions[0];
+        SelectedSort = AllSorts[0];
         IssuedFrom = null;
         IssuedTo = null;
     }

@@ -14,24 +14,22 @@ public sealed class ClientService(IClientRepository clients, IInvoiceRepository 
     public async Task<Client> SaveAsync(
         int id, string name, string email, int paymentTermDays, CancellationToken cancellationToken = default)
     {
-        Client client;
-        if (id == 0)
+        // Valide d'abord sur une copie : un refus ne laisse aucun objet a moitie modifie.
+        var candidate = new Client(name, email, paymentTermDays);
+        var all = await clients.GetAllAsync(cancellationToken);
+        var isDuplicate = all.Any(other =>
+            other.Id != id && string.Equals(other.Name, candidate.Name, StringComparison.CurrentCultureIgnoreCase));
+        if (isDuplicate)
         {
-            client = new Client(name, email, paymentTermDays);
+            throw new BusinessRuleException($"Un client nommé « {candidate.Name} » existe déjà.");
         }
-        else
+
+        var client = candidate;
+        if (id != 0)
         {
             client = await clients.GetByIdAsync(id, cancellationToken)
                 ?? throw new BusinessRuleException("Ce client n'existe plus.");
             client.Update(name, email, paymentTermDays);
-        }
-
-        var all = await clients.GetAllAsync(cancellationToken);
-        var isDuplicate = all.Any(other =>
-            other.Id != client.Id && string.Equals(other.Name, client.Name, StringComparison.CurrentCultureIgnoreCase));
-        if (isDuplicate)
-        {
-            throw new BusinessRuleException($"Un client nommé « {client.Name} » existe déjà.");
         }
 
         await clients.SaveAsync(client, cancellationToken);

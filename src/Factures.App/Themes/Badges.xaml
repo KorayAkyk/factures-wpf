@@ -1,0 +1,42 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:domain="clr-namespace:Factures.Core.Domain;assembly=Factures.Core">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="Colors.xaml" />
+  </ResourceDictionary.MergedDictionaries>
+  <!-- Le texte du statut reste affiche : la couleur n'est jamais la seule information. -->
+  <Style x:Key="StatusBadge" TargetType="Border">
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="10,2" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Background" Value="{StaticResource NeutralSoftBrush}" />
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding Status}" Value="{x:Static domain:InvoiceStatus.Sent}">
+        <Setter Property="Background" Value="{StaticResource InfoSoftBrush}" />
+      </DataTrigger>
+      <DataTrigger Binding="{Binding Status}" Value="{x:Static domain:InvoiceStatus.Paid}">
+        <Setter Property="Background" Value="{StaticResource SuccessSoftBrush}" />
+      </DataTrigger>
+      <DataTrigger Binding="{Binding Status}" Value="{x:Static domain:InvoiceStatus.Overdue}">
+        <Setter Property="Background" Value="{StaticResource DangerSoftBrush}" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+
+  <DataTemplate x:Key="StatusBadgeTemplate">
+    <Border Style="{StaticResource StatusBadge}">
+      <TextBlock Text="{Binding StatusLabel}" FontSize="12" Foreground="{StaticResource TextBrush}" />
+    </Border>
+  </DataTemplate>
+
+  <!-- Bandeau de message de la fenetre principale. -->
+  <Style x:Key="NotificationBanner" TargetType="Border">
+    <Setter Property="Background" Value="{StaticResource SuccessSoftBrush}" />
+    <Setter Property="Padding" Value="16,10" />
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding IsError}" Value="True">
+        <Setter Property="Background" Value="{StaticResource DangerSoftBrush}" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+</ResourceDictionary>

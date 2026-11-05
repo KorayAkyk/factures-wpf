@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Factures.App</RootNamespace>
+    <AssemblyName>FacturesWpf</AssemblyName>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <AssemblyTitle>Factures WPF</AssemblyTitle>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Factures.Core\Factures.Core.csproj" />
+    <ProjectReference Include="..\Factures.Data\Factures.Data.csproj" />
+    <ProjectReference Include="..\Factures.Presentation\Factures.Presentation.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+</Project>

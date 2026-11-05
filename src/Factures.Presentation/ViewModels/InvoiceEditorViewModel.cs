@@ -42,8 +42,8 @@ public sealed partial class InvoiceEditorViewModel : PageViewModel
         _clients = clients;
         _navigator = navigator;
         _clock = clock;
-        _issueDate = clock.Today;
-        _dueDate = clock.Today;
+        IssueDate = clock.Today;
+        DueDate = clock.Today;
         Lines.CollectionChanged += OnLinesChanged;
     }
 
