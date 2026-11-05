@@ -111,7 +111,7 @@ La CI exécute ces mêmes commandes.
 Pour installer sans compiler : ouvrir une
 [exécution de la CI](https://github.com/KorayAkyk/factures-wpf/actions/workflows/ci.yml), télécharger l'artefact
 `FacturesWpf-msi`, puis lancer le fichier `.msi`. Le MSI n'est pas signé : Windows affiche un avertissement.
-Le fichier fait environ 57 Mo. La désinstallation laisse la base de données en place dans
+Le fichier fait environ 53 Mo. La désinstallation laisse la base de données en place dans
 `%LOCALAPPDATA%\FacturesWpf`.
 
 ## Ce qui est vérifié, et comment
