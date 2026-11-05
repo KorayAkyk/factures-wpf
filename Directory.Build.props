@@ -1,0 +1,27 @@
+<Project>
+  <!-- Reglages communs a tous les projets de la solution. -->
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <Version Condition="'$(Version)' == ''">1.0.0</Version>
+    <Authors>Koray Akyurek</Authors>
+    <Company>Koray Akyurek</Company>
+    <Product>Factures WPF</Product>
+    <Copyright>Copyright (c) 2026 Koray Akyurek</Copyright>
+    <NeutralLanguage>fr-FR</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>8.0</AnalysisLevel>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <IsPackable>false</IsPackable>
+    <SatelliteResourceLanguages>fr</SatelliteResourceLanguages>
+    <!-- Les restaurations verifient les failles connues des paquets. -->
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>moderate</NuGetAuditLevel>
+  </PropertyGroup>
+</Project>
