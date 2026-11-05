@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Factures WPF"
+           Manufacturer="Koray Akyurek"
+           Version="$(var.ProductVersion)"
+           UpgradeCode="6B1F2C53-6E0A-4E67-9C7B-2F4A9D1E8A10"
+           Scope="perMachine"
+           Compressed="yes"
+           Language="1036"
+           Codepage="1252">
+    <SummaryInformation Description="Suivi de factures pour travailleur independant" />
+
+    <MajorUpgrade DowngradeErrorMessage="Une version plus récente de Factures WPF est déjà installée." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="AppIcon.ico" SourceFile="$(var.RepoRoot)src\Factures.App\Assets\app.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/KorayAkyk/factures-wpf" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <ui:WixUI Id="WixUI_Minimal" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Factures WPF" />
+    </StandardDirectory>
+
+    <!-- Tout le dossier publie, sans liste a maintenir a la main. -->
+    <ComponentGroup Id="PublishedFiles" Directory="INSTALLFOLDER">
+      <Files Include="!(bindpath.PublishedApp)**" />
+    </ComponentGroup>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="StartMenuShortcut" Guid="3D0E8A44-0C5B-4F0B-8D0E-55C1B7E2A901">
+        <Shortcut Id="AppShortcut"
+                  Name="Factures WPF"
+                  Description="Suivi de factures"
+                  Target="[INSTALLFOLDER]FacturesWpf.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AppIcon.ico" />
+        <RegistryValue Root="HKMU"
+                       Key="Software\Koray Akyurek\Factures WPF"
+                       Name="StartMenuShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="Factures WPF" Level="1">
+      <ComponentGroupRef Id="PublishedFiles" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+  </Package>
+</Wix>

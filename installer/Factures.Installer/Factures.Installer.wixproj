@@ -1,0 +1,21 @@
+<Project Sdk="WixToolset.Sdk">
+  <!-- Le MSI embarque le dossier produit par la publication. Voir build/Package.proj. -->
+  <PropertyGroup>
+    <OutputName>FacturesWpf-$(Version)-x64</OutputName>
+    <OutputType>Package</OutputType>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <PublishedAppDir Condition="'$(PublishedAppDir)' == ''">$(RepoRoot)artifacts\publish\</PublishedAppDir>
+    <DefineConstants>ProductVersion=$(Version);PublishedAppDir=$(PublishedAppDir);RepoRoot=$(RepoRoot)</DefineConstants>
+    <BindVariables>PublishedAppDir=$(PublishedAppDir)</BindVariables>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" />
+    <BindPath Include="$(PublishedAppDir)" BindName="PublishedApp" />
+  </ItemGroup>
+
+  <!-- Echoue tout de suite, avec un message clair, plutot qu'un MSI vide. -->
+  <Target Name="VerifyPublishedApp" BeforeTargets="CoreCompile;Compile">
+    <Error Condition="!Exists('$(PublishedAppDir)FacturesWpf.exe')"
+           Text="Application non publiee dans '$(PublishedAppDir)'. Lancez d'abord : dotnet msbuild build/Package.proj -t:Publish" />
+  </Target>
+</Project>

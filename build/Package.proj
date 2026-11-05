@@ -1,0 +1,43 @@
+<Project DefaultTargets="All">
+  <!--
+    Chaine de livraison en MSBuild pur, la meme en local et en integration continue :
+      dotnet msbuild build/Package.proj              publication, MSI et paquet NuGet
+      dotnet msbuild build/Package.proj -t:Publish   une seule etape
+  -->
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <RepoRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..'))</RepoRoot>
+    <ArtifactsDir>$(RepoRoot)artifacts\</ArtifactsDir>
+    <PublishedAppDir>$(ArtifactsDir)publish\</PublishedAppDir>
+    <RuntimeId>win-x64</RuntimeId>
+    <AppProject>$(RepoRoot)src\Factures.App\Factures.App.csproj</AppProject>
+    <CoreProject>$(RepoRoot)src\Factures.Core\Factures.Core.csproj</CoreProject>
+    <InstallerProject>$(RepoRoot)installer\Factures.Installer\Factures.Installer.wixproj</InstallerProject>
+    <VersionProperty Condition="'$(Version)' != ''">;Version=$(Version)</VersionProperty>
+  </PropertyGroup>
+
+  <Target Name="All" DependsOnTargets="Publish;Msi;Pack" />
+
+  <!-- Autonome : l'utilisateur n'a pas besoin d'installer le runtime .NET. -->
+  <Target Name="Publish">
+    <RemoveDir Directories="$(PublishedAppDir)" />
+    <PropertyGroup>
+      <PublishProperties>Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeId);SelfContained=true;PublishReadyToRun=false$(VersionProperty)</PublishProperties>
+    </PropertyGroup>
+    <!-- La restauration doit etre evaluee a part : le jeton force une nouvelle evaluation. -->
+    <MSBuild Projects="$(AppProject)" Targets="Restore" Properties="$(PublishProperties);MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
+    <MSBuild Projects="$(AppProject)" Targets="Publish" Properties="$(PublishProperties);PublishDir=$(PublishedAppDir)" />
+  </Target>
+
+  <Target Name="Msi">
+    <MSBuild Projects="$(InstallerProject)" Targets="Restore" Properties="Configuration=$(Configuration);MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
+    <MSBuild Projects="$(InstallerProject)" Targets="Build"
+             Properties="Configuration=$(Configuration);PublishedAppDir=$(PublishedAppDir);OutputPath=$(ArtifactsDir)msi\$(VersionProperty)" />
+  </Target>
+
+  <Target Name="Pack">
+    <MSBuild Projects="$(CoreProject)" Targets="Restore" Properties="Configuration=$(Configuration);MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
+    <MSBuild Projects="$(CoreProject)" Targets="Pack"
+             Properties="Configuration=$(Configuration);PackageOutputPath=$(ArtifactsDir)nuget\$(VersionProperty)" />
+  </Target>
+</Project>
