@@ -106,6 +106,7 @@ public sealed class ViewsTests : IDisposable
         Assert.NotEmpty(RealizedRows(view));
         var labels = Descendants<TextBlock>(view).Select(text => text.Text).ToList();
         Assert.Contains(InvoiceStatus.Overdue.ToFrench(), labels);
+        Assert.Contains("Aucune date", labels);
     });
 
     [Fact]

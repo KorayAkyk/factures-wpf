@@ -91,8 +91,8 @@
               AutomationProperties.AutomationId="invoices-grid">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Numéro" Binding="{Binding DisplayNumber}" Width="120" />
-        <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="2*" />
-        <DataGridTextColumn Header="Objet" Binding="{Binding Subject}" Width="3*" />
+        <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="5*" />
+        <DataGridTextColumn Header="Objet" Binding="{Binding Subject}" Width="6*" />
         <DataGridTextColumn Header="Date" Binding="{Binding IssueDate, StringFormat={}{0:dd/MM/yyyy}}" Width="90" />
         <DataGridTextColumn Header="Échéance" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" Width="90" />
         <DataGridTemplateColumn Header="Statut" Width="100" CellTemplate="{StaticResource StatusBadgeTemplate}" />
