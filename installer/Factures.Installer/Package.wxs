@@ -18,7 +18,7 @@
     <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
     <Property Id="ARPURLINFOABOUT" Value="https://github.com/KorayAkyk/factures-wpf" />
 
-    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.RepoRoot)installer\Factures.Installer\License.rtf" />
     <ui:WixUI Id="WixUI_Minimal" />
 
     <StandardDirectory Id="ProgramFiles64Folder">
@@ -27,7 +27,7 @@
 
     <!-- Tout le dossier publie, sans liste a maintenir a la main. -->
     <ComponentGroup Id="PublishedFiles" Directory="INSTALLFOLDER">
-      <Files Include="!(bindpath.PublishedApp)**" />
+      <Files Include="!(bindpath.PublishedApp)\**" />
     </ComponentGroup>
 
     <StandardDirectory Id="ProgramMenuFolder">

@@ -179,13 +179,15 @@ public sealed class ViewsTests : IDisposable
         window.Content = null;
         root.DataContext = viewModel;
         Render(root);
-        Assert.DoesNotContain(Descendants<TextBlock>(root), text => text.Text == "Message de test" && text.IsVisible);
+        var banner = Descendants<Border>(root).Single(
+            border => System.Windows.Automation.AutomationProperties.GetAutomationId(border) == "notification-banner");
+        Assert.Equal(Visibility.Collapsed, banner.Visibility);
 
         viewModel.Notifications.ShowError("Message de test");
         Render(root);
 
-        var banner = Descendants<TextBlock>(root).Single(text => text.Text == "Message de test");
-        Assert.Equal(Visibility.Visible, ((FrameworkElement)VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(banner))).Visibility);
+        Assert.Equal(Visibility.Visible, banner.Visibility);
+        Assert.Contains(Descendants<TextBlock>(banner), text => text.Text == "Message de test");
         window.Close();
     });
 

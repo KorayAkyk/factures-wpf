@@ -5,12 +5,12 @@
     <OutputType>Package</OutputType>
     <InstallerPlatform>x64</InstallerPlatform>
     <PublishedAppDir Condition="'$(PublishedAppDir)' == ''">$(RepoRoot)artifacts\publish\</PublishedAppDir>
-    <DefineConstants>ProductVersion=$(Version);PublishedAppDir=$(PublishedAppDir);RepoRoot=$(RepoRoot)</DefineConstants>
-    <BindVariables>PublishedAppDir=$(PublishedAppDir)</BindVariables>
+    <DefineConstants>ProductVersion=$(Version);RepoRoot=$(RepoRoot)</DefineConstants>
+    <Cultures>fr-FR</Cultures>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.UI.wixext" />
-    <BindPath Include="$(PublishedAppDir)" BindName="PublishedApp" />
+    <BindPath Include="$(PublishedAppDir.TrimEnd('\'))" BindName="PublishedApp" />
   </ItemGroup>
 
   <!-- Echoue tout de suite, avec un message clair, plutot qu'un MSI vide. -->

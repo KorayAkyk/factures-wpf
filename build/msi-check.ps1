@@ -10,7 +10,9 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'ui-helpers.ps1')
 
+$MsiPath = (Resolve-Path $MsiPath).Path
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
+$LogDir = (Resolve-Path $LogDir).Path
 $installDir = Join-Path $env:ProgramFiles 'Factures WPF'
 $exe = Join-Path $installDir 'FacturesWpf.exe'
 $shortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Factures WPF.lnk'
