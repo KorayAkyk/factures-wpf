@@ -48,7 +48,8 @@ try {
     Assert-That ($editorTotal.Current.Name -match [char]0x20AC) "Total sans euro : '$($editorTotal.Current.Name)'"
     $issueDate = Wait-Element -Root $window -AutomationId 'editor-issue-date'
     $issueText = $issueDate.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
-    Assert-That ($issueText -match '^\d{2}/\d{2}/\d{4}$') "Date hors format francais : '$issueText'"
+    $expectedDate = (Get-Date).ToString('dd/MM/yyyy', [Globalization.CultureInfo]::InvariantCulture)
+    Assert-That ($issueText.StartsWith($expectedDate)) "Date hors format francais : '$issueText', attendu $expectedDate"
     Save-Capture -Window $window -Path $(if ($CaptureDir) { Join-Path $CaptureDir 'editeur.png' })
 
     # Un brouillon sans client est refuse, et le message apparait a l'ecran.
