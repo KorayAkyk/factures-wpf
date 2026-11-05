@@ -38,7 +38,7 @@
                   Target="[INSTALLFOLDER]FacturesWpf.exe"
                   WorkingDirectory="INSTALLFOLDER"
                   Icon="AppIcon.ico" />
-        <RegistryValue Root="HKMU"
+        <RegistryValue Root="HKLM"
                        Key="Software\Koray Akyurek\Factures WPF"
                        Name="StartMenuShortcut"
                        Type="integer"

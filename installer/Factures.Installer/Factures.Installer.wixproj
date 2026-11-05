@@ -7,6 +7,8 @@
     <PublishedAppDir Condition="'$(PublishedAppDir)' == ''">$(RepoRoot)artifacts\publish\</PublishedAppDir>
     <DefineConstants>ProductVersion=$(Version);RepoRoot=$(RepoRoot)</DefineConstants>
     <Cultures>fr-FR</Cultures>
+    <!-- ICE60 signale des bibliotheques du runtime .NET sans langue declaree : sans effet ici. -->
+    <SuppressIces>ICE60</SuppressIces>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.UI.wixext" />
