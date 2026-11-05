@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Factures.Core</RootNamespace>
+    <!-- Publie aussi en paquet NuGet : le metier ne depend de rien d'autre que .NET. -->
+    <IsPackable>true</IsPackable>
+    <PackageId>FacturesWpf.Core</PackageId>
+    <Description>Regles metier de suivi de factures : statuts, totaux, recherche LINQ, tableau de bord, export CSV.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>factures;invoices;linq</PackageTags>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>
