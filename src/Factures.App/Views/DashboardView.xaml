@@ -104,7 +104,7 @@
               <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="2*" />
               <DataGridTextColumn Header="Objet" Binding="{Binding Subject}" Width="3*" />
               <DataGridTextColumn Header="Échéance" Binding="{Binding DueDate, StringFormat={}{0:dd/MM/yyyy}}" Width="90" />
-              <DataGridTextColumn Header="Retard (jours)" Binding="{Binding DaysOverdue}" Width="95" />
+              <DataGridTextColumn Header="Retard (jours)" Binding="{Binding DaysOverdue}" Width="115" />
               <DataGridTextColumn Header="Total TTC" Width="100"
                                   Binding="{Binding TotalIncludingTax, StringFormat={}{0:C2}}"
                                   ElementStyle="{StaticResource RightAlignedCellText}" />
