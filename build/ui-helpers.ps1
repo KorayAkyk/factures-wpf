@@ -1,6 +1,6 @@
 # Fonctions communes aux verifications de bout en bout (UI Automation et captures).
 
-Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes, System.Drawing
+Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes, System.Drawing, System.Windows.Forms
 
 Add-Type -TypeDefinition @'
 using System;
@@ -17,13 +17,13 @@ function Assert-That([bool]$Condition, [string]$Message) {
     if (-not $Condition) { throw "ECHEC : $Message" }
 }
 
-function Wait-Until([scriptblock]$Condition, [string]$Message, [int]$TimeoutSeconds = 20) {
+function Wait-Until([scriptblock]$Condition, [string]$FailureText, [int]$TimeoutSeconds = 20) {
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     while ((Get-Date) -lt $deadline) {
         if (& $Condition) { return }
         Start-Sleep -Milliseconds 200
     }
-    throw "ECHEC : $Message"
+    throw "ECHEC : $FailureText"
 }
 
 function Wait-MainWindow($Process, [int]$TimeoutSeconds = 60) {
@@ -38,6 +38,29 @@ function Wait-MainWindow($Process, [int]$TimeoutSeconds = 60) {
         Start-Sleep -Milliseconds 300
     }
     throw "La fenetre principale n'est pas apparue en $TimeoutSeconds s."
+}
+
+function Set-LargestDisplay {
+    foreach ($size in @(@(1920, 1080), @(1600, 900), @(1280, 1024))) {
+        try {
+            Set-DisplayResolution -Width $size[0] -Height $size[1] -Force -ErrorAction Stop | Out-Null
+        }
+        catch {
+            continue
+        }
+        Start-Sleep -Seconds 2
+        $screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+        if ($screen.Width -ge $size[0]) { break }
+    }
+    $screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+    Write-Host "Ecran : $($screen.Width) x $($screen.Height)"
+}
+
+function Move-WindowOnScreen($Window, [int]$Width = 1200, [int]$Height = 780) {
+    $area = [System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea
+    $transform = $Window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern)
+    $transform.Resize([Math]::Min($Width, $area.Width), [Math]::Min($Height, $area.Height))
+    $transform.Move($area.X, $area.Y)
 }
 
 function Find-Element($Root, [string]$AutomationId) {

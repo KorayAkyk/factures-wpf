@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Windows;
-using System.Windows.Markup;
 using System.Windows.Threading;
 using Factures.App.Views;
 using Factures.Presentation.Services;
@@ -58,8 +57,7 @@ public partial class App : Application
         var french = CultureInfo.GetCultureInfo("fr-FR");
         CultureInfo.DefaultThreadCurrentCulture = french;
         CultureInfo.DefaultThreadCurrentUICulture = french;
-        FrameworkElement.LanguageProperty.OverrideMetadata(
-            typeof(FrameworkElement),
-            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(french.IetfLanguageTag)));
+        CultureInfo.CurrentCulture = french;
+        CultureInfo.CurrentUICulture = french;
     }
 }

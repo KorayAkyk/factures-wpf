@@ -14,13 +14,14 @@ $ExePath = (Resolve-Path $ExePath).Path
 $dataDir = Join-Path $env:RUNNER_TEMP ("factures-smoke-" + [guid]::NewGuid().ToString('N'))
 $env:FACTURES_DATA_DIR = $dataDir
 
-try { Set-DisplayResolution -Width 1600 -Height 1000 -Force -ErrorAction Stop } catch { Write-Host "Resolution inchangee : $_" }
+Set-LargestDisplay
 
 if ($CaptureDir) { New-Item -ItemType Directory -Force -Path $CaptureDir | Out-Null }
 
 $process = Start-Process -FilePath $ExePath -PassThru
 try {
     $window = Wait-MainWindow -Process $process
+    Move-WindowOnScreen -Window $window
 
     $null = Wait-Element -Root $window -AutomationId 'dashboard-page'
     $kpi = Wait-Element -Root $window -AutomationId 'kpi-paid'
@@ -42,12 +43,18 @@ try {
 
     Invoke-Element -Root $window -AutomationId 'invoice-new'
     $null = Wait-Element -Root $window -AutomationId 'invoice-editor-page'
+    # Culture francaise : euro dans les totaux, jour/mois/annee dans les dates.
+    $editorTotal = Wait-Element -Root $window -AutomationId 'editor-total'
+    Assert-That ($editorTotal.Current.Name -match [char]0x20AC) "Total sans euro : '$($editorTotal.Current.Name)'"
+    $issueDate = Wait-Element -Root $window -AutomationId 'editor-issue-date'
+    $issueText = $issueDate.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+    Assert-That ($issueText -match '^\d{2}/\d{2}/\d{4}$') "Date hors format francais : '$issueText'"
     Save-Capture -Window $window -Path $(if ($CaptureDir) { Join-Path $CaptureDir 'editeur.png' })
 
     # Un brouillon sans client est refuse, et le message apparait a l'ecran.
     Invoke-Element -Root $window -AutomationId 'editor-save'
-    $message = Wait-Element -Root $window -AutomationId 'notification-text'
-    Wait-Until { $message.Current.Name -eq 'Choisissez un client.' } "Message d'erreur absent : '$($message.Current.Name)'"
+    $notification = Wait-Element -Root $window -AutomationId 'notification-text'
+    Wait-Until { $notification.Current.Name -eq 'Choisissez un client.' } "Message d'erreur absent : '$($notification.Current.Name)'"
     Save-Capture -Window $window -Path $(if ($CaptureDir) { Join-Path $CaptureDir 'erreur-visible.png' })
     Invoke-Element -Root $window -AutomationId 'editor-cancel'
 

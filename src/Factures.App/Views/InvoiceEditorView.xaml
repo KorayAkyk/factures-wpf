@@ -32,7 +32,7 @@
         <StackPanel Grid.Column="4">
           <TextBlock Text="Date" Style="{StaticResource FieldLabel}" />
           <DatePicker SelectedDate="{Binding IssueDate, Converter={StaticResource DateOnlyToDateTime}}"
-                      AutomationProperties.Name="Date" />
+                      AutomationProperties.AutomationId="editor-issue-date" AutomationProperties.Name="Date" />
         </StackPanel>
         <StackPanel Grid.Column="6">
           <TextBlock Text="Échéance" Style="{StaticResource FieldLabel}" />
